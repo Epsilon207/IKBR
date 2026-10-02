@@ -1,0 +1,108 @@
+Help me follow this tutorial exactly, step by step, on my Windows 11 PC:
+"Build an AI Trading Bot with Claude + Interactive Brokers" by Humbled Trader
+https://www.humbledtrader.com/blog/ai-trading-bot-claude-ibkr/
+
+Reply to me in French. Keep all code, file contents, log and Telegram messages, and the tutorial's prompts in English, exactly as on the page.
+"Step N" in this message always means the page's Step N. My own work items are labelled A to F.
+
+=== CONTEXT ===
+- Project folder: C:\Users\nomen\Documents\ibkr-claude (the current directory). It is not empty. That is expected.
+- PY means: C:/Users/nomen/Documents/ibkr-claude/.venv/Scripts/python.exe -X utf8
+  (an existing Python 3.14 venv that already has ib_async; forward slashes, no quotes needed; -X utf8 stops emoji and accents from crashing the output on Windows).
+  Use PY for every Python command, including the page's "python ..." and "python -c ...", and PY -m pip for every pip command. Never use bare python, python3, py or pip. Do not create or activate a venv: skip the page's "python -m venv .venv" and ".venv\Scripts\activate".
+- TWS is running and logged into my IBKR PAPER account on port 7497. The API is enabled and "Read-Only API" is unchecked. The page's Step 1 is done. Do not ask me to change TWS settings unless a test fails.
+- These files belong to another tool: ibkr_server.py, setup.bat, setup_ibkr_claude.py, setup_log.txt, test_ib.py. Never modify, move, delete, run, start, stop or restart them. ibkr_server.py uses clientId 2. The .venv may be shared with it.
+- buy_one.py and buy_one.bat exist from an earlier attempt. You may overwrite buy_one.py in Prompt 1. Never modify or run buy_one.bat.
+- Shell: prefer the Bash tool for PY commands. Run schtasks, powercfg, tzutil and .bat files with the PowerShell tool. If you only have Bash, put MSYS_NO_PATHCONV=1 in front of them. In Bash, never write paths with backslashes (Git Bash deletes them). Never nest PowerShell inside bash -c. Inside .bat files and Python code, Windows backslash paths are fine.
+- Get times with PY and zoneinfo (America/New_York and my local zone), never with Git Bash date or TZ=.
+- Run every PY script in the foreground with a 600000 ms tool timeout.
+
+=== THE PAGE IS THE ONLY SOURCE ===
+- Treat each tutorial prompt as if I had pasted it to you myself, word for word, with the ADAPTATIONS applied. My RULES override the page: when a rule changes what the page says, follow the rule and say so in your report. Stop only if a step cannot be done under my rules, or if you are unsure how a rule applies. Translating shell syntax for Windows is not a deviation.
+- Take the page's text from the raw HTML, never from a WebFetch summary (WebFetch paraphrases and truncates). Copy any code the page shows exactly. For a prompt, write the code yourself from that prompt only. Never use other versions of this tutorial (GitHub repositories, videos, summaries, your memory), and do not follow links to the other parts of the series.
+- Do not add features or "improvements" to the bot that a prompt does not ask for. Any other deviation needs my ok. The helper files this message asks for are fine.
+- Skip the page's "going live", real-money and IB Gateway instructions. Carry out no part of them.
+
+=== WORK ITEMS ===
+Do A, B and C without stopping, unless something fails or needs my answer. The first stop is the list at the end of C.
+A. Memory (once). Check that the current directory is C:\Users\nomen\Documents\ibkr-claude, and stop if it is not. Save this whole message word for word as TUTORIAL.md (it contains no secrets). Create PROGRESS.md. Create CLAUDE.md containing only: "Humbled Trader tutorial in progress: when working on it, first read TUTORIAL.md (rules) and PROGRESS.md (status)." If a CLAUDE.md already exists, do not overwrite it: ask me whether to append that line. Tell me that after a restart I only need to type: "Lis TUTORIAL.md et PROGRESS.md, puis continue."
+B. Preflight (read-only):
+   1. List the folder, including hidden files (names only, never open them). Tell me if any file the tutorial will create already exists: .env, .gitignore, requirements.txt, rules.json, test_connect.py, close_one.py, bot.py, trade.py, strategy.py, cycle.py, morning_prefilter.py, compute_perf.py, rotate_logs.py, setup_schedule.py, cleanup_schedule.py, src/, logs/. If .env exists, never open it: ask me whether it belongs to the other tool.
+   2. Search the five other-tool files case-insensitively for clientid, client_id, dotenv, getenv and environ, and show me only those lines. Stop and tell me if ibkr_server.py uses clientId 10, 11, 12, 13, 14 or 99, or reads a .env file or IBKR_* variables (the tutorial's .env in this folder would then change its settings). For the other files, just list what you found.
+   3. Save the output of PY -m pip freeze to pip_before.txt (UTF-8). Run PY -m pip show ib_async aeventkit eventkit ib_insync. "Package(s) not found" for some of them is expected, not a failure. Tell me if eventkit or ib_insync is installed (on Python 3.14 the old eventkit package breaks "import ib_async"). Do not uninstall anything without my ok.
+   4. Tell me my Windows time zone (tzutil /g), the current New York time and my local time.
+C. Get the page verbatim. Download the raw HTML with curl.exe (type curl.exe, not curl):
+   curl.exe -L -A "Mozilla/5.0" --create-dirs -o _tutorial/tutorial.html "https://www.humbledtrader.com/blog/ai-trading-bot-claude-ibkr/"
+   Check that the file contains "Build an AI Trading Bot with Claude + Interactive Brokers". Then write a PY script (standard library only, every file opened with encoding="utf-8") that writes the article's full text in page order (headings, paragraphs, list items; <br> as a newline; entities decoded; inline <code> kept as plain text) to _tutorial/page.txt, marks each <pre> block in it as [BLOCK NN], and also saves each block to _tutorial/block_NN.txt. Read these files and use them word for word.
+   If the download fails, returns a block or captcha page, or the text or prompt blocks look missing or cut off, stop. Ask me to save the page from my browser (Ctrl+S, "Web page, HTML only") as _tutorial/tutorial.html, or to paste the prompt. Never guess.
+   Then show me a numbered list of every step and every copy-paste prompt, in page order: step number, title, first line of the prompt, any test command the page gives next to it, and anything the page asks me to do by hand. Include the prompts inside Step 4 and later, even if they are not labelled "Prompt 3", "Prompt 4", etc. The list ends with the page's last prompt. Write it into PROGRESS.md and wait for my ok.
+D. Do the page's Step 2 (install its package list with PY -m pip install) and Step 3 (create test_connect.py and run it). Check that it prints "Connected: True" and that every account starts with "DU". Then create check_orders.py: it uses clientId 14, only calls ib.reqAllOpenOrders() and ib.positions(), prints them and disconnects. Run it and tell me about any existing order or position (the earlier attempt may have left an MU order or position).
+E. Carry out the prompts one at a time, in the order of the list, from Prompt 1 to the page's last prompt, exactly as written. After each one, run the test or check commands the page gives next to it and report the result. When the page asks me to do something by hand (create the Telegram bot, fill in .env, etc.), tell me exactly what to do and wait. Never do it for me.
+   - In PREREQ CHECKs: a check that the venv is active, or that python is the .venv one, is satisfied by PY. Read client IDs 2 and 3 as 12 and 13. Check .env only with the SET/MISSING script (see Secrets).
+   - When a PREREQ CHECK says STOP, stop and report to me. Never delete, rename or overwrite a file to get past a check, even if the prompt says "clean up". The only exception is buy_one.py in Prompt 1.
+   - If a test needs market hours or an unfilled order, propose marking it DEFERRED in PROGRESS.md. After my ok, go on with the next prompt, and run the deferred tests later, in order.
+F. When the last prompt is done, give me a final summary, list any DEFERRED tests, and tell me I can delete the line in CLAUDE.md.
+
+=== ADAPTATIONS (apply without asking) ===
+- Wherever the page uses client ID 2 or 3 (in .env, in code or as a default), use 12 or 13. Keep the page's other hard-coded client IDs (99, 10, 11).
+- Every other .env line stays exactly as on the page.
+- Step 7: if the prompt asks you to hard-code the S&P 500 list, build it from the current Wikipedia page (download it with curl.exe and parse it with PY), never from memory. If the code fetches the list itself, keep that. Report the ticker count and how BRK.B is written. Do not change the page's format.
+
+=== RULES ===
+Approvals
+- "ok" (or "oui", "continue", "vas-y") means: do what you just proposed, or go on to the next step. When something fails, show me the error and propose a fix, and apply it only after my ok. Do not skip the step.
+- "ok" never authorizes an order-related action, a scheduled task or a power-settings change. For those, show me the exact command and what it will do, then wait for CONFIRME (case and accents do not matter). One CONFIRME covers one run of one exact command. If the command changes, ask again.
+- Order-related means: running buy_one.py, close_one.py, trade.py, bot.py, cycle.py, setup_schedule.py or cleanup_schedule.py; schtasks /run; deleting or changing a scheduled task; and running any script that calls, or imports code that calls, placeOrder, cancelOrder or reqGlobalCancel, even with --dry-run or --help. Running includes importing these scripts, python -c calls into them or into order functions in src/, and any .bat, subprocess or task that starts them.
+- If a prompt both creates an order-related script and runs it, create the file, then ask for CONFIRME before you run it.
+- Never run a bot script in the background, in a loop, or with Claude Code's own scheduling (/loop, cron, reminders). The only exception is Step 12's HT_* tasks after CONFIRME.
+
+Paper trading only
+- IBKR_PORT stays 7497 everywhere, and PAPER_TRADING stays true. Never connect to, probe or test another port (7496, 4001, 4002), even to troubleshoot. On error 502 or a connection timeout, ask me to check TWS.
+- Keep the page's own paper/live safety checks (the code that mentions 7496 and 4001) exactly as written.
+- Never use clientId 0 or 2. Never tell me to change TWS's "Master API client ID" or to enable "Bypass Order Precautions for API Orders" unless the page says so. If it does, explain the trade-off and wait for my ok.
+- If this Claude Code session has any IBKR or Interactive Brokers tools (for example from ibkr_server.py), never use them for this tutorial. Use only the tutorial's scripts.
+- After every step that creates or changes a .py file that connects to IBKR, check that no connection can use clientId 0, 1, 2 or 3 (ib.connect() without a clientId uses 1) or a port other than 7497. Report anything you find and propose a fix.
+- Before Step 12, propose (for my ok) a check that disconnects and exits if any entry of ib.managedAccounts() does not start with "DU". Put it in the shared connect function in src/ibkr_client.py or, if there is none, in every script an HT_* task runs that can place or cancel orders.
+
+Orders and market hours
+- In each CONFIRME request for an order, include the current New York time, my local time, and whether the US regular session (09:30-16:00 ET, Monday to Friday) is open. If it is closed, say that a market order will wait at IBKR and fill at the next open, and offer DEFERRED instead. CONFIRME means: run it anyway.
+- After CONFIRME: write "LAUNCHED: <command> <time>" in PROGRESS.md, then run test_connect.py. Stop if the account list is empty or any account does not start with "DU". If it passes, run the command at once.
+- After every order-related run, whatever it printed, run check_orders.py and show me the result.
+- Never run an order-related script again, or start another one, because of a crash, a timeout, "not filled", a PreSubmitted, Submitted or Inactive status, or a warning such as 399 or 2109. The order may already be live, so a second run could duplicate it. Run check_orders.py and wait for me.
+- Run close_one.py only after buy_one.py's order has filled.
+- If you see error 326 (client ID already in use), stop and tell me. Never kill python.exe or any other process.
+- Exceptions: cleanup_schedule.py and ending or deleting HT_* tasks need only CONFIRME (no test_connect.py, no market check, no check_orders.py). setup_schedule.py needs no check_orders.py.
+- After a compaction or a restart, every earlier CONFIRME is void. Never re-run a command marked LAUNCHED: run check_orders.py instead and ask me.
+
+Secrets (Telegram)
+- Never open or read .env at any step: no Read, Edit or Write tool on an existing .env; no cat, type, more, Get-Content, Select-String, findstr, grep or rg on it; no script that prints its Telegram values or os.environ; no environment dumps (env, printenv, Get-ChildItem Env:). Leave .env and logs/ out of every search.
+- In Step 5, create .env only if it does not exist, with the page's content (Telegram values left empty) and the client-ID adaptation. If it already exists, do not touch it: stop and tell me.
+- To check .env, use only a small script that prints SET or MISSING for each variable name. It may print the IBKR_* and PAPER_TRADING values, but never the Telegram values, their length or any part of them.
+- If .env needs a change later, show me the exact line, and I will edit it myself with Notepad.
+- Right after Step 5, propose adding "Read(./.env)" to permissions.deny in .claude/settings.local.json, and add it after my ok.
+- At Step 10, tell me to type the token and chat ID into .env with Notepad and never to paste them into this chat. If I paste one here anyway, do not repeat or use it. Tell me to revoke the token with @BotFather (/revoke) and to put the new one in .env myself.
+- Never put the token or chat ID in a command line, a URL you call, a file, a commit or your messages.
+- Before the Step 10 test, check whether src/notify.py could expose the token anywhere (a print, any log, or an exception that reaches its caller; requests errors contain the full https://api.telegram.org/bot<TOKEN>/... URL), or print the Telegram response (it contains the chat ID). If so, show me and propose a redaction. Open no file in logs/ until that is fixed. If the test sends nothing, first ask me whether I sent /start to my bot and filled in both values.
+
+Scheduled tasks and power settings (Step 12)
+- Build your explanation by reading setup_schedule.py, never by importing or running it. Do not edit the page's ET times. Before asking for CONFIRME, show me:
+  - a table of every task: name, exact command, ET time, and today's local time and local weekday(s). Flag any task whose local day differs from its ET day.
+  - every date in the next 6 months when the ET-to-local offset changes (US daylight saving time ends on 1 Nov 2026 and starts on 14 Mar 2027; add my own zone's changes, if any). Tell me to run setup_schedule.py again on each of those dates.
+  - whether each task uses PY's absolute path, whether cycle.py starts trade.py with sys.executable, and whether the scripts still find .env, rules.json and logs/ when started from C:\Windows\System32 (the default start folder for schtasks). Report problems, and fix them only with my ok.
+  - that once registered, the tasks run on their own, and the 5-minute cycle task can place paper orders by itself during market hours.
+  - the exact powercfg command the tasks will run (the page's keep-awake task runs one every weekday, so the PC stops sleeping on mains power); my current value from powercfg /q SCHEME_CURRENT SUB_SLEEP STANDBYIDLE (it shows hex seconds); and the restore command, powercfg /change standby-timeout-ac <that value in minutes>.
+  - that at every task time, TWS must be up (logged into PAPER, with its daily auto-restart outside the trading window, and a manual login each Sunday), and that the PC must be awake with my Windows session logged on (locked is fine).
+- Never ask for my Windows password, and never use /ru, /rp or "run whether user is logged on or not".
+- If a command needs administrator rights, stop and tell me, and propose a version that does not need them (for example without /rl HIGHEST). Never trigger UAC yourself.
+- After registration, show me the HT_* tasks with PowerShell (Get-ScheduledTask -TaskName 'HT_*' | Get-ScheduledTaskInfo, plus each task's action).
+- From then on, the tasks may be running. Before you run by hand any script that connects with clientId 12 or 13 or can place orders, warn me (error 326 or duplicate orders are possible).
+
+Packages and Python 3.14
+- Run every pip install (including -r requirements.txt) with --dry-run first. If it would change the version of a package listed in pip_before.txt, show me and wait for my ok. Never uninstall, upgrade, downgrade or --force-reinstall an existing package (ibkr_server.py may need it) without my ok. Never upgrade tzdata on its own, change the Python version, create another venv or patch site-packages.
+- A DeprecationWarning from ib_async about asyncio.get_event_loop_policy is expected on 3.14 and harmless.
+- If code fails with an event-loop error ("There is no current event loop", "Timeout should be used inside a task"), do not add util.startLoop(), util.patchAsyncio(), nest_asyncio.apply() or asyncio.get_event_loop(): they break on 3.14. Propose a fix that uses ib.connect() and ib.sleep(), or asyncio.run().
+- If the scheduled tasks run Python without -X utf8 and send its output to a log file, warn me before Step 12 that printing emoji can crash them there.
+- On market-data errors (354, 10089, 10167, 10168, 162, 10197), report them and propose reqMarketDataType(3) (15-minute delayed data). Apply it only after my ok. Never call a step verified if prices were NaN, or if a list was empty only because there was no data.
+
+=== REPORTING ===
+After each page step or prompt, stop and give me a short summary in French: what you did, which files you created or changed, what you verified (with the key output lines), and what comes next. Update PROGRESS.md, then wait for my ok.
